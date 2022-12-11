@@ -68,7 +68,7 @@ def get_all_items(): # Output all items from items_to_check.txt as a list
                 output.append(eval(i))
     return output
 
-def read_product_info(link): # Read product name, price/l and alc. volume from Prisma, Rimi or Selver
+def get_product_info(link): # Read product name, price/l and alc. volume from Prisma, Rimi or Selver
     headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
     name = ''
     price = ''
@@ -124,4 +124,31 @@ def read_product_info(link): # Read product name, price/l and alc. volume from P
 def calculate_parmukoefitsient(item): # Calculates parmukoefitsient. Expects {'name': name, 'price': price, 'volume': volume} as parameter.
     return item['volume'] / item['price']
 
-print(read_product_info('https://www.selver.ee/likoor-jagermeister-100-cl'))
+def get_best_offer(item): # Returns the best offer for the item, based on price per litre. #TODO: Test
+    l = get_all_items()
+    min_price = 10000
+
+    for i in l:
+        if item.lower() in list(i.keys()):
+            for shop in i.values():
+                for links in shop.values():
+                    for link in links:
+                        if get_product_info(link)['price'] < min_price:
+                            min_price = get_product_info(link)['price']
+                            best_offer = get_product_info(link)
+    
+    return best_offer
+
+def get_cheapest_drink(): # Gets cheapest drink based on parmukoefitsient #TODO: Test
+    l = get_all_items
+    best_pk = 0
+    
+    for i in l:
+        for shop in i.values():
+            for links in shop.values():
+                for link in links:
+                    if get_product_info(link)['price'] > best_pk:
+                        best_pk = get_product_info(link)['price']
+                        best_offer = get_product_info(link)       
+
+    return best_pk
